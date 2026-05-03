@@ -1,0 +1,32 @@
+experiment:
+  name: pick_cube_random_rgbd_record
+  seed: 0
+  output_dir: /Users/yiannis.hadjiyianni/side/maniskill-base/runs/pick_cube_random_rgbd_record
+
+env:
+  id: PickCube-v1
+  num_envs: 1
+  obs_mode: rgbd
+  control_mode: pd_joint_delta_pos
+  render_mode: rgb_array
+  max_episode_steps: 100
+  robot_uids: panda
+  kwargs: {}
+
+policy:
+  type: random
+
+action_adapter:
+  type: clip_box
+
+observation_adapter:
+  type: identity
+
+recording:
+  enabled: true
+  save_video: true
+  save_trajectory: true
+  video_fps: 30
+
+evaluation:
+  num_episodes: 10

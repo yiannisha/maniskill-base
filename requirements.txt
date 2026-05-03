@@ -1,0 +1,4 @@
+mani_skill
+gymnasium
+numpy
+pyyaml

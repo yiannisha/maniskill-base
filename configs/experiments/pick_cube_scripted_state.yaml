@@ -1,0 +1,34 @@
+experiment:
+  name: pick_cube_scripted_state
+  seed: 0
+  output_dir: runs/pick_cube_scripted_state
+
+env:
+  id: PickCube-v1
+  num_envs: 1
+  obs_mode: state
+  control_mode: pd_joint_delta_pos
+  render_mode: human
+  max_episode_steps: 100
+  robot_uids: panda
+  kwargs: {}
+
+policy:
+  type: scripted
+  params:
+    action_scale: 0.05
+
+action_adapter:
+  type: clip_box
+
+observation_adapter:
+  type: identity
+
+recording:
+  enabled: false
+  save_video: false
+  save_trajectory: false
+  video_fps: 30
+
+evaluation:
+  num_episodes: 100
