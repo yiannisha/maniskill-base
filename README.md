@@ -76,6 +76,42 @@ python scripts/run_eval.py \
   --config configs/experiments/pick_cube_scripted_state.yaml
 ```
 
+## Running OpenPI Inference
+
+The `openpi` policy type lets this harness query a Physical Intelligence OpenPI
+policy from the normal rollout loop. OpenPI is optional: the dependency is
+imported only when a config selects `policy.type: openpi`.
+
+For local in-process inference, install OpenPI in the same Python environment as
+this repo, then point the config at an OpenPI training config and checkpoint:
+
+```yaml
+policy:
+  type: openpi
+  params:
+    mode: local
+    config_name: your_openpi_config
+    checkpoint_dir: /path/to/openpi/checkpoint
+    prompt: pick up the cube
+    open_loop_horizon: 1
+    observation:
+      state:
+        source: agent/qpos
+        key: observation/state
+      images:
+        observation/image:
+          source: sensor_data/base_camera/rgb
+          resize: [224, 224]
+        observation/wrist_image:
+          source: sensor_data/wrist_camera/rgb
+          resize: [224, 224]
+```
+
+For a local OpenPI websocket server instead, start OpenPI's policy server and use
+`mode: websocket` with `host` and `port` params. The observation keys must match
+the OpenPI config/checkpoint you are serving or loading, and the returned action
+dimension must match the ManiSkill controller's action space.
+
 ## Recording Trajectories And Videos
 
 Record one rollout with RGB-D observations and ManiSkill's `RecordEpisode` wrapper:

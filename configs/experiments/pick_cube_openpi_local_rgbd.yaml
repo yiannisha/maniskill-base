@@ -1,0 +1,52 @@
+experiment:
+  name: pick_cube_openpi_local_rgbd
+  seed: 0
+  output_dir: runs/pick_cube_openpi_local_rgbd
+
+env:
+  id: PickCubeThirdPersonCamera-v0
+  num_envs: 1
+  obs_mode: rgbd
+  control_mode: pd_joint_delta_pos
+  render_mode: human
+  max_episode_steps: 100
+  robot_uids: panda
+  kwargs: {}
+
+policy:
+  type: openpi
+  params:
+    mode: local
+    # Replace these with an OpenPI config/checkpoint trained for this
+    # ManiSkill observation layout and controller action space.
+    config_name: your_openpi_config
+    checkpoint_dir: /path/to/openpi/checkpoint
+    prompt: pick up the cube
+    action_key: actions
+    open_loop_horizon: 1
+    observation:
+      state:
+        source: agent/qpos
+        key: observation/state
+      images:
+        observation/image:
+          source: sensor_data/base_camera/rgb
+          resize: [224, 224]
+        observation/wrist_image:
+          source: sensor_data/wrist_camera/rgb
+          resize: [224, 224]
+
+action_adapter:
+  type: clip_box
+
+observation_adapter:
+  type: identity
+
+recording:
+  enabled: false
+  save_video: false
+  save_trajectory: false
+  video_fps: 30
+
+evaluation:
+  num_episodes: 1

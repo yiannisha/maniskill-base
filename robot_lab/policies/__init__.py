@@ -25,11 +25,13 @@ def build_policy(policy_cfg: dict[str, Any]) -> Policy:
 
 
 from robot_lab.policies.random_policy import RandomPolicy
+from robot_lab.policies.openpi_policy import OpenPIPolicy
 from robot_lab.policies.remote_policy_stub import RemotePolicyStub
 from robot_lab.policies.scripted_policy import ScriptedPolicy
 
 register_policy("crazy", CrazyPolicy)
 register_policy("demo_replay", DemoReplayPolicy)
+register_policy("openpi", OpenPIPolicy)
 register_policy("random", RandomPolicy)
 register_policy("scripted", ScriptedPolicy)
 register_policy("remote_stub", RemotePolicyStub)
@@ -38,6 +40,7 @@ __all__ = [
     "CrazyPolicy",
     "DemoReplayPolicy",
     "POLICY_REGISTRY",
+    "OpenPIPolicy",
     "Policy",
     "RandomPolicy",
     "RemotePolicyStub",

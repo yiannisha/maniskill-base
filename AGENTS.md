@@ -159,6 +159,26 @@ Key params:
 - `timeout_s`
 - `fallback_to_random`
 
+### `openpi`
+
+Implemented by `OpenPIPolicy`.
+
+- Runs a Physical Intelligence OpenPI policy from this harness
+- Supports local in-process inference via OpenPI's `create_trained_policy`
+- Also supports websocket inference against an OpenPI policy server
+- Maps ManiSkill observations into configurable OpenPI observation keys
+- Consumes OpenPI action chunks with a configurable open-loop horizon
+
+Key params:
+
+- `mode`
+- `config_name`
+- `checkpoint_dir`
+- `prompt`
+- `observation`
+- `open_loop_horizon`
+- `action_key`
+
 ## Action Adapters
 
 Action adapters are selected with:
