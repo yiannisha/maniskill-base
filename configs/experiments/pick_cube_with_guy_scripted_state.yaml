@@ -1,10 +1,10 @@
 experiment:
-  name: pick_cube_random_state
+  name: pick_cube_with_guy_scripted_state
   seed: 0
-  output_dir: runs/pick_cube_random_state
+  output_dir: /Users/yiannis.hadjiyianni/side/maniskill-base/runs/pick_cube_with_guy_scripted_state
 
 env:
-  id: PickCube-v1
+  id: PickCubeWithGuy-v0
   num_envs: 1
   obs_mode: state
   control_mode: pd_joint_delta_pos
@@ -14,7 +14,9 @@ env:
   kwargs: {}
 
 policy:
-  type: random
+  type: scripted
+  params:
+    action_scale: 0.05
 
 action_adapter:
   type: clip_box

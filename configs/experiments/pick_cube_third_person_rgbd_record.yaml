@@ -1,14 +1,14 @@
 experiment:
-  name: pick_cube_random_rgbd_record
+  name: pick_cube_third_person_rgbd_record
   seed: 0
-  output_dir: /Users/yiannis.hadjiyianni/side/maniskill-base/runs/pick_cube_random_rgbd_record
+  output_dir: /Users/yiannis.hadjiyianni/side/maniskill-base/runs/pick_cube_third_person_rgbd_record
 
 env:
-  id: PickCube-v1
+  id: PickCubeThirdPersonCamera-v0
   num_envs: 1
   obs_mode: rgbd
   control_mode: pd_joint_pos
-  render_mode: rgb_array
+  render_mode: human
   max_episode_steps: 100
   robot_uids: panda
   kwargs: {}
@@ -16,12 +16,9 @@ env:
 policy:
   type: demo_replay
   params:
-    demo_env_id: PickCube-v1
+    env_id: PickCube-v1
     source: motionplanning
     cycle_episodes: false
-
-# policy:
-#   type: random
 
 action_adapter:
   type: clip_box

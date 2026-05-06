@@ -4,6 +4,7 @@ from typing import Any
 
 from robot_lab.policies.base import Policy
 from robot_lab.policies.crazy_policy import CrazyPolicy
+from robot_lab.policies.demo_replay_policy import DemoReplayPolicy
 
 POLICY_REGISTRY: dict[str, type[Policy]] = {}
 
@@ -28,12 +29,14 @@ from robot_lab.policies.remote_policy_stub import RemotePolicyStub
 from robot_lab.policies.scripted_policy import ScriptedPolicy
 
 register_policy("crazy", CrazyPolicy)
+register_policy("demo_replay", DemoReplayPolicy)
 register_policy("random", RandomPolicy)
 register_policy("scripted", ScriptedPolicy)
 register_policy("remote_stub", RemotePolicyStub)
 
 __all__ = [
     "CrazyPolicy",
+    "DemoReplayPolicy",
     "POLICY_REGISTRY",
     "Policy",
     "RandomPolicy",

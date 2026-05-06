@@ -1,0 +1,40 @@
+experiment:
+  name: pick_cube_third_person_demo_replay_motionplanning
+  seed: 0
+  output_dir: /Users/yiannis.hadjiyianni/side/maniskill-base/runs/pick_cube_third_person_demo_replay_motionplanning
+
+env:
+  id: PickCubeThirdPersonCamera-v0
+  num_envs: 1
+  obs_mode: state
+  control_mode: pd_joint_pos
+  render_mode: human
+  max_episode_steps: 100
+  robot_uids: panda
+  kwargs: {}
+
+policy:
+  type: demo_replay
+  params:
+    demo_env_id: PickCube-v1
+    source: motionplanning
+    cycle_episodes: false
+
+action_adapter:
+  type: identity
+
+observation_adapter:
+  type: identity
+
+recording:
+  enabled: false
+  save_video: false
+  save_trajectory: false
+  video_fps: 30
+
+evaluation:
+  num_episodes: 1000
+
+runner:
+  debug_log: true
+  step_pause: false

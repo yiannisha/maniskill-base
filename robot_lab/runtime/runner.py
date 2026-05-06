@@ -70,6 +70,9 @@ class RolloutRunner:
         self.observation_adapter = observation_adapter
         self.output_dir = Path(cfg["experiment"]["output_dir"])
         self.max_episode_steps = cfg["env"].get("max_episode_steps")
+        runner_cfg = cfg.get("runner", {})
+        self.debug_log = bool(runner_cfg.get("debug_log", False))
+        self.step_pause = bool(runner_cfg.get("step_pause", False))
 
     def run(self) -> dict:
         num_episodes = int(self.cfg.get("evaluation", {}).get("num_episodes", 1))
@@ -79,21 +82,42 @@ class RolloutRunner:
 
         for episode_index in range(num_episodes):
             episode_seed = None if base_seed is None else int(base_seed) + episode_index
-            obs, info = self.env.reset(seed=episode_seed)
+            episode_context = {
+                "episode_index": episode_index,
+                "episode_seed": episode_seed,
+                "env_id": self.cfg["env"]["id"],
+                "control_mode": self.cfg["env"].get("control_mode"),
+            }
+            reset_kwargs = dict(self.policy.get_reset_kwargs(episode_context))
+            if episode_seed is not None and "seed" not in reset_kwargs:
+                reset_kwargs["seed"] = episode_seed
+
+            obs, info = self.env.reset(**reset_kwargs)
+            print("Rendering...")
             self.env.render()
-            episode_dir = self.recorder.start_episode(episode_index, episode_seed=episode_seed)
+            effective_episode_seed = reset_kwargs.get("seed", episode_seed)
+            episode_dir = self.recorder.start_episode(
+                episode_index,
+                episode_seed=effective_episode_seed,
+            )
             self.evaluator.reset()
             self.policy.reset(
                 {
-                    "episode_index": episode_index,
-                    "episode_seed": episode_seed,
-                    "env_id": self.cfg["env"]["id"],
+                    **episode_context,
+                    "episode_seed": effective_episode_seed,
+                    "reset_kwargs": reset_kwargs,
                 }
             )
 
             t = 0
             while True:
                 policy_obs = self.observation_adapter.adapt(obs)
+                if self.debug_log:
+                    print(f"Observation at step {t}: {obs}, shape: {obs.shape}")
+                    print(
+                        f"Policy observation at step {t}: "
+                        f"{policy_obs}, shape: {policy_obs.shape}"
+                    )
                 t0 = time.perf_counter()
                 action_result = self.policy.act(policy_obs, info, self.env.action_space, t)
                 elapsed_ms = (time.perf_counter() - t0) * 1000.0
@@ -104,8 +128,16 @@ class RolloutRunner:
                     action_result.action,
                     self.env.action_space,
                 )
+                if self.debug_log:
+                    print(f"Action at step {t}: {action_result.action}")
 
                 obs, reward, terminated, truncated, info = self.env.step(action_result.action)
+                if self.debug_log:
+                    print(
+                        f"Reward at step {t}: {reward}, "
+                        f"Terminated: {terminated}, Truncated: {truncated}, Info: {info}"
+                    )
+                print("Rendering...")
                 self.env.render()
                 self.evaluator.update(obs, reward, terminated, truncated, info, action_result)
                 self.recorder.record_step(t, reward, terminated, truncated, info, action_result)
@@ -115,6 +147,9 @@ class RolloutRunner:
                     break
                 if self.max_episode_steps is not None and t >= int(self.max_episode_steps):
                     break
+
+                if self.step_pause:
+                    input("Press Enter to continue to the next step...")
 
             episode_summary = self.evaluator.summary(episode_index, episode_dir)
             self.recorder.finalize_episode()

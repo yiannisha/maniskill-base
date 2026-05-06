@@ -10,6 +10,7 @@ import robot_lab.maniskill_ext  # noqa: F401
 
 def make_env(cfg: dict) -> gym.Env:
     env_cfg = cfg["env"]
+    recording_cfg = cfg.get("recording", {})
 
     kwargs: dict[str, object] = {}
     for key in (
@@ -24,13 +25,18 @@ def make_env(cfg: dict) -> gym.Env:
         if value is not None:
             kwargs[key] = value
 
+    if recording_cfg.get("enabled", False) and recording_cfg.get("save_video", False):
+        if kwargs.get("render_mode") == "human":
+            kwargs["render_mode"] = "rgb_array"
+
     kwargs.update(env_cfg.get("kwargs", {}))
 
     env = gym.make(env_cfg["id"], **kwargs)
 
-    recording_cfg = cfg.get("recording", {})
     if recording_cfg.get("enabled", False):
         from mani_skill.utils.wrappers.record import RecordEpisode
+
+        print(f"Wrapping env with RecordEpisode wrapper for recording. Recording config: {recording_cfg}")
 
         output_dir = Path(cfg["experiment"]["output_dir"])
         env = RecordEpisode(

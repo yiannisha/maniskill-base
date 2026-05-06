@@ -1,12 +1,12 @@
 experiment:
-  name: pick_cube_random_rgbd_record
+  name: pick_cube_demo_replay_motionplanning
   seed: 0
-  output_dir: /Users/yiannis.hadjiyianni/side/maniskill-base/runs/pick_cube_random_rgbd_record
+  output_dir: runs/pick_cube_demo_replay_motionplanning
 
 env:
   id: PickCube-v1
   num_envs: 1
-  obs_mode: rgbd
+  obs_mode: state
   control_mode: pd_joint_pos
   render_mode: rgb_array
   max_episode_steps: 100
@@ -16,15 +16,12 @@ env:
 policy:
   type: demo_replay
   params:
-    demo_env_id: PickCube-v1
+    env_id: PickCube-v1
     source: motionplanning
     cycle_episodes: false
 
-# policy:
-#   type: random
-
 action_adapter:
-  type: clip_box
+  type: identity
 
 observation_adapter:
   type: identity
@@ -36,4 +33,8 @@ recording:
   video_fps: 30
 
 evaluation:
-  num_episodes: 10
+  num_episodes: 1000
+
+runner:
+  debug_log: false
+  step_pause: false
