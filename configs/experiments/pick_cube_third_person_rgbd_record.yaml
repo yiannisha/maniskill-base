@@ -33,4 +33,4 @@ recording:
   video_fps: 30
 
 evaluation:
-  num_episodes: 10
+  num_episodes: 1000

@@ -1,0 +1,37 @@
+experiment:
+  name: pick_cube_openarm_left_ik
+  seed: 0
+  output_dir: runs/pick_cube_openarm_left_ik
+
+env:
+  id: PickCubeOpenArm-v0
+  num_envs: 1
+  obs_mode: state_dict
+  # obs_mode: rgbd
+  control_mode: pd_ee_delta_pos
+  render_mode: human
+  max_episode_steps: 120
+  robot_uids: openarm_left
+  kwargs: {}
+
+policy:
+  type: openarm_pick_ik
+
+action_adapter:
+  type: clip_box
+
+observation_adapter:
+  type: identity
+
+recording:
+  enabled: false
+  save_video: false
+  save_trajectory: false
+  video_fps: 30
+
+evaluation:
+  num_episodes: 100
+
+runner:
+  debug_log: false
+  step_pause: false
